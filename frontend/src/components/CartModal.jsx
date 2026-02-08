@@ -138,7 +138,6 @@ const CartModal = ({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem }) =>
             </div>
           )}
         </div>
-
         {/* Footer */}
         {cart && cart.items && cart.items.length > 0 && (
           <div className="p-6 border-t border-dark-700/50 space-y-4">
@@ -149,14 +148,6 @@ const CartModal = ({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem }) =>
                 ${cart.total?.toFixed(2) || '0.00'}
               </span>
             </div>
-
-            {/* Show in Alert Button (Assignment Requirement) */}
-            <button
-              onClick={handleShowAlert}
-              className="btn-secondary w-full"
-            >
-              Show Cart Details (Alert)
-            </button>
           </div>
         )}
       </div>

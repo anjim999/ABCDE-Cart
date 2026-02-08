@@ -158,33 +158,18 @@ const ShopPage = () => {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            {/* Cart Button (Alert version) */}
+            {/* Cart Button (Modal version) */}
             <button
-              onClick={() => {
-                if (!cart || !cart.items || cart.items.length === 0) {
-                  window.alert('No items in cart');
-                } else {
-                  const details = cart.items.map(item => `Cart ID: ${item.cart_id}, Item ID: ${item.item_id}`).join('\n');
-                  window.alert(`Current Cart Items:\n\n${details}`);
-                }
-              }}
+              onClick={() => setShowCartModal(true)}
               className="btn-secondary flex items-center gap-2 py-2 px-4 text-sm"
             >
               <ShoppingCart className="w-4 h-4" />
               <span>Cart Details</span>
             </button>
 
-            {/* Order History Button (Alert version) */}
+            {/* Order History Button (Modal version) */}
             <button
-              onClick={async () => {
-                const response = await orderApi.myOrders();
-                if (response.success && response.data.length > 0) {
-                  const ids = response.data.map(o => `Order ID: ${o.id}`).join('\n');
-                  window.alert(`Order History:\n\n${ids}`);
-                } else {
-                  window.alert('No order history found');
-                }
-              }}
+              onClick={() => setShowOrderHistory(true)}
               className="btn-secondary flex items-center gap-2 py-2 px-4 text-sm"
             >
               <History className="w-4 h-4" />

@@ -4,9 +4,9 @@ echo   ShopEase - E-Commerce Application
 echo ========================================
 echo.
 
-echo Starting Backend Server...
-cd backend
-start cmd /k "go run cmd/server/main.go"
+echo Starting Backend Server (Node.js/Mongo)...
+cd backend-node
+start cmd /k "node server.js"
 
 echo.
 echo Starting Frontend Server...

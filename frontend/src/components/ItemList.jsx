@@ -21,17 +21,37 @@ const ItemList = ({ onCartUpdate }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(8);
+
   useEffect(() => {
     fetchItems();
     fetchCategories();
-  }, [selectedCategory]);
+  }, [selectedCategory, page]);
 
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const response = await itemApi.list(1, 50, selectedCategory);
+      const response = await itemApi.list({ 
+        page, 
+        page_size: itemsPerPage, 
+        category: selectedCategory 
+      });
+      
       if (response.success) {
         setItems(response.data || []);
+        // Calculate pages (assuming backend returns total count or meta)
+        // If your backend returns meta, use: setTotalPages(Math.ceil(response.meta.total / itemsPerPage));
+        // For now, if full items returned, just handle normally or assume simplified response
+        if (response.meta) {
+            setTotalPages(Math.ceil(response.meta.total / itemsPerPage));
+        } else {
+             // Fallback if backend doesn't send total count easily yet, let's assume if full page returned, there might be more
+             if (response.data.length === itemsPerPage) {
+                 setTotalPages(page + 1); 
+             }
+        }
       }
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -42,7 +62,7 @@ const ItemList = ({ onCartUpdate }) => {
 
   const fetchCategories = async () => {
     try {
-      const response = await itemApi.categories();
+      const response = await itemApi.getCategories();
       if (response.success) {
         setCategories(response.data || []);
       }
@@ -142,101 +162,139 @@ const ItemList = ({ onCartUpdate }) => {
           <p className="text-dark-500">Try adjusting your search or filter criteria</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="item-card card-hover group cursor-pointer animate-fade-in"
-              style={{ animationDelay: `${index * 50}ms` }}
-              onClick={() => handleAddToCart(item.id)}
-            >
-              {/* Image */}
-              <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-dark-800">
-                {item.image_url ? (
-                  <img
-                    src={item.image_url}
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-16 h-16 text-dark-600" />
-                  </div>
-                )}
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredItems.map((item, index) => (
+              <div
+                key={item.id}
+                className="item-card card-hover group cursor-pointer animate-fade-in"
+                style={{ animationDelay: `${index * 50}ms` }}
+                onClick={() => handleAddToCart(item.id)}
+              >
+                {/* Image */}
+                <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-dark-800">
+                  {item.image_url ? (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="w-16 h-16 text-dark-600" />
+                    </div>
+                  )}
 
-                {/* Overlay with Add Button */}
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    addedItems.has(item.id)
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-white text-dark-900'
-                  }`}>
-                    {addingToCart === item.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : addedItems.has(item.id) ? (
-                      <Check className="w-4 h-4" />
-                    ) : (
-                      <Plus className="w-4 h-4" />
-                    )}
-                    <span className="text-sm font-medium">
-                      {addedItems.has(item.id) ? 'Added!' : 'Add to Cart'}
+                  {/* Overlay with Add Button */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                      addedItems.has(item.id)
+                        ? 'bg-emerald-500 text-white'
+                        : 'bg-white text-dark-900'
+                    }`}>
+                      {addingToCart === item.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : addedItems.has(item.id) ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Plus className="w-4 h-4" />
+                      )}
+                      <span className="text-sm font-medium">
+                        {addedItems.has(item.id) ? 'Added!' : 'Add to Cart'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Category Badge */}
+                  {item.category && (
+                    <div className="absolute top-3 left-3">
+                      <span className="badge-primary text-xs">
+                        {item.category}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-dark-100 group-hover:text-primary-400 transition-colors line-clamp-1">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-dark-400 line-clamp-2">
+                    {item.description}
+                  </p>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-lg font-bold text-primary-400">
+                      ${item.price.toFixed(2)}
                     </span>
+                    <div className="flex items-center gap-1 text-amber-400">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="text-sm">4.8</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Category Badge */}
-                {item.category && (
-                  <div className="absolute top-3 left-3">
-                    <span className="badge-primary text-xs">
-                      {item.category}
-                    </span>
+                {/* Quick Add Indicator */}
+                {addingToCart === item.id && (
+                  <div className="absolute inset-0 bg-dark-950/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                    <div className="flex items-center gap-3 text-white">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span>Adding...</span>
+                    </div>
                   </div>
                 )}
               </div>
+            ))}
+          </div>
 
-              {/* Content */}
-              <div className="space-y-2">
-                <h3 className="font-semibold text-dark-100 group-hover:text-primary-400 transition-colors line-clamp-1">
-                  {item.name}
-                </h3>
-                <p className="text-sm text-dark-400 line-clamp-2">
-                  {item.description}
-                </p>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-lg font-bold text-primary-400">
-                    ${item.price.toFixed(2)}
-                  </span>
-                  <div className="flex items-center gap-1 text-amber-400">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-sm">4.8</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Add Indicator */}
-              {addingToCart === item.id && (
-                <div className="absolute inset-0 bg-dark-950/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                  <div className="flex items-center gap-3 text-white">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    <span>Adding...</span>
-                  </div>
-                </div>
-              )}
+          {/* Pagination Controls */}
+          <div className="flex flex-col items-center gap-4 mt-8 pt-6 border-t border-dark-700/50">
+            <div className="flex items-center gap-2 font-display text-sm font-medium">
+              <span className="text-dark-400">Showing</span>
+              <span className="text-primary-400">{filteredItems.length}</span>
+              <span className="text-dark-400">items on page {page}</span>
             </div>
-          ))}
-        </div>
-      )}
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1 || loading}
+                className="btn-secondary px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                Previous
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
+                      page === i + 1
+                        ? 'bg-primary-500 text-white shadow-glow-sm'
+                        : 'bg-dark-800 text-dark-400 hover:bg-dark-700 hover:text-white'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
 
-      {/* Product Count */}
-      <div className="text-center pt-4">
-        <p className="text-dark-500 text-sm">
-          Showing {filteredItems.length} of {items.length} products
-        </p>
-      </div>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages || loading}
+                className="btn-secondary px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

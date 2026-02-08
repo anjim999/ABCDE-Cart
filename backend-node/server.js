@@ -3,11 +3,18 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const routes = require('./routes/api');
 
+const mongoose = require('mongoose');
+
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URL || process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // Global Middleware
 app.use(cors());

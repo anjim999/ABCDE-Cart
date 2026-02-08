@@ -170,18 +170,7 @@ const OrderHistory = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* Footer */}
-        {orders.length > 0 && (
-          <div className="p-6 border-t border-dark-700/50">
-            <button
-              onClick={handleShowAlert}
-              className="btn-secondary w-full flex items-center justify-center gap-2"
-            >
-              <History className="w-4 h-4" />
-              Show Order IDs (Alert)
-            </button>
-          </div>
-        )}
+
       </div>
     </div>
   );

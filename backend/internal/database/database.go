@@ -159,12 +159,77 @@ func SeedItems() error {
 			Name:        "Phone Stand",
 			Description: "Adjustable aluminum phone and tablet stand",
 			Price:       15.99,
-			ImageURL:    "https://images.unsplash.com/photo-1586816879360-004a0b7b1f8b?w=400",
+			ImageURL:    "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=400",
 			Category:    "Accessories",
 			IsActive:    true,
 		},
-	}
+		{
+			Name:        "Smart Thermostat",
+			Description: "Wi-Fi enabled smart thermostat for home automation",
+			Price:       199.99,
+			ImageURL:    "https://images.unsplash.com/photo-1563461661026-6b2c5c9930f7?w=400",
+			Category:    "Home",
+			IsActive:    true,
+		},
+		{
+			Name:        "Gaming Headset",
+			Description: "Surround sound gaming headset with microphone",
+			Price:       89.99,
+			ImageURL:    "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400",
+			Category:    "Electronics",
+			IsActive:    true,
+		},
+		{
+			Name:        "External SSD 1TB",
+			Description: "High-speed portable external solid state drive",
+			Price:       129.99,
+			ImageURL:    "https://images.unsplash.com/photo-1597872252721-24642f56f180?w=400",
+			Category:    "Electronics",
+			IsActive:    true,
+		},
+		{
+			Name:        "Bluetooth Speaker",
+			Description: "Portable waterproof bluetooth speaker",
+			Price:       79.99,
+			ImageURL:    "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",
+			Category:    "Electronics",
+			IsActive:    true,
+		},
+		{
+			Name:        "Monitor Stand",
+			Description: "Dual monitor mount with gas spring arms",
+			Price:       69.99,
+			ImageURL:    "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400",
+			Category:    "Office",
+			IsActive:    true,
+		},
+		{
+			Name:        "Wireless Charger",
+			Description: "Fast wireless charging pad for smartphones",
+			Price:       29.99,
+			ImageURL:    "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400",
+			Category:    "Accessories",
+			IsActive:    true,
+		},
+		{
+			Name:        "Drone Camera",
+			Description: "4K camera drone with stabilization",
+			Price:       499.99,
+			ImageURL:    "https://images.unsplash.com/photo-1507582020474-9a35b7d450d7?w=400",
+			Category:    "Electronics",
+			IsActive:    true,
+		},
+		{
+			Name:        "VR Headset",
+			Description: "Virtual reality headset with controllers",
+			Price:       399.99,
+			ImageURL:    "https://images.unsplash.com/photo-1622979135225-d2ba269fb1bd?w=400",
+			Category:    "Electronics",
+			IsActive:    true,
+		},
 
+	}
+	
 	for _, item := range items {
 		if err := DB.Create(&item).Error; err != nil {
 			log.Printf("Error seeding item %s: %v", item.Name, err)

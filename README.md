@@ -125,7 +125,18 @@ shopease/
 - Node.js 18 or higher
 - npm or yarn
 
-### Backend Setup
+### Backend Setup (Option 1: Node.js + MongoDB - Recommended)
+
+```bash
+cd backend-node
+npm install
+# Create a .env file with your MONGODB_URL
+npm start
+```
+
+The server will start at `http://localhost:8080`.
+
+### Backend Setup (Option 2: Go + SQLite)
 
 ```bash
 cd backend
@@ -133,7 +144,7 @@ go mod download
 go run cmd/server/main.go
 ```
 
-The server will start at `http://localhost:8080`
+The server will start at `http://localhost:8080`.
 
 ### Frontend Setup
 
