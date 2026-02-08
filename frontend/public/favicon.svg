@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="15" />
+      <feOffset dx="0" dy="10" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Icon container -->
+  <rect x="20" y="20" width="472" height="472" rx="120" fill="#0f172a" />
+  
+  <!-- Shopping Bag Icon -->
+  <g filter="url(#shadow)">
+    <path d="M352 192V160C352 107.023 308.977 64 256 64C203.023 64 160 107.023 160 160V192H112V416C112 433.673 126.327 448 144 448H368C385.673 448 400 433.673 400 416V192H352ZM192 160C192 124.695 220.695 96 256 96C291.305 96 320 124.695 320 160V192H192V160ZM368 416H144V224H368V416Z" fill="url(#gradient)" />
+    <!-- Inner detail -->
+    <rect x="200" y="280" width="112" height="12" rx="6" fill="white" opacity="0.3" />
+    <rect x="200" y="310" width="80" height="12" rx="6" fill="white" opacity="0.2" />
+  </g>
+</svg>
