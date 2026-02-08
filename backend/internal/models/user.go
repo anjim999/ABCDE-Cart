@@ -19,8 +19,9 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	// Relationships
-	Cart   *Cart   `gorm:"foreignKey:UserID" json:"cart,omitempty"`
-	Orders []Order `gorm:"foreignKey:UserID" json:"orders,omitempty"`
+	Cart      *Cart   `gorm:"foreignKey:UserID" json:"cart,omitempty"`
+	Orders    []Order `gorm:"foreignKey:UserID" json:"orders,omitempty"`
+	Favorites []Item  `gorm:"many2many:user_favorites;" json:"favorites,omitempty"`
 }
 
 // UserCreateRequest represents the request body for creating a user

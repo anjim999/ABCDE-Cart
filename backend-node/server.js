@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const routes = require('./routes/api');
 
 const mongoose = require('mongoose');
+const { seedIfEmpty } = require('./utils/seeder');
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +14,10 @@ const PORT = process.env.PORT || 8080;
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL || process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .then(async () => {
+    console.log('✅ MongoDB Connected Successfully');
+    await seedIfEmpty();
+  })
   .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // Global Middleware
@@ -28,23 +32,6 @@ app.get('/health', (req, res) => res.json({ status: 'healthy', message: 'ShopEas
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   ███████╗██╗  ██╗ ██████╗ ██████╗ ███████╗ █████╗ ███████╗║
-║   ██╔════╝██║  ██║██╔═══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝║
-║   ███████╗███████║██║   ██║██████╔╝█████╗  ███████║███████╗║
-║   ╚════██║██╔══██║██║   ██║██╔═══╝ ██╔══╝  ██╔══██║╚════██║║
-║   ███████║██║  ██║╚██████╔╝██║     ███████╗██║  ██║███████║║
-║   ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝║
-║                                                           ║
-║   🛒 E-Commerce Shopping Cart API                         ║
-║   Built with Node.js • Professional Modular Design        ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-
-✅ Database initialized
-✅ Professional Modular Structure Loaded
-🚀 Server running on http://localhost:${PORT}
-`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });
+

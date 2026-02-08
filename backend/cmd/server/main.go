@@ -21,23 +21,7 @@ import (
 // @name Authorization
 
 func main() {
-	// ASCII Art Banner
-	banner := `
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   ███████╗██╗  ██╗ ██████╗ ██████╗ ███████╗ █████╗ ███████╗║
-║   ██╔════╝██║  ██║██╔═══██╗██╔══██╗██╔════╝██╔══██╗██╔════╝║
-║   ███████╗███████║██║   ██║██████╔╝█████╗  ███████║███████╗║
-║   ╚════██║██╔══██║██║   ██║██╔═══╝ ██╔══╝  ██╔══██║╚════██║║
-║   ███████║██║  ██║╚██████╔╝██║     ███████╗██║  ██║███████║║
-║   ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝║
-║                                                           ║
-║   🛒 E-Commerce Shopping Cart API                         ║
-║   Built with Go • Gin • GORM                              ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-`
-	log.Println(banner)
+	log.Println("✅ ShopEase API starting...")
 
 	// Load configuration
 	config.LoadConfig()
@@ -81,20 +65,7 @@ func main() {
 
 	// Start server
 	addr := ":" + config.AppConfig.Port
-	log.Printf("🚀 Server starting on http://localhost%s", addr)
-	log.Println("📚 API Documentation: http://localhost" + addr + "/health")
-	log.Println("\n📋 Available Endpoints:")
-	log.Println("   POST   /users          - Create user")
-	log.Println("   GET    /users          - List users")
-	log.Println("   POST   /users/login    - Login")
-	log.Println("   POST   /users/logout   - Logout (auth required)")
-	log.Println("   POST   /items          - Create item")
-	log.Println("   GET    /items          - List items")
-	log.Println("   POST   /carts          - Add to cart (auth required)")
-	log.Println("   GET    /carts          - List carts (auth required)")
-	log.Println("   POST   /orders         - Create order (auth required)")
-	log.Println("   GET    /orders         - List orders (auth required)")
-	log.Println("")
+	log.Printf("🚀 Server running on http://localhost%s", addr)
 
 	if err := router.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)

@@ -1,37 +1,42 @@
-# 🛒 ShopEase - E-Commerce Shopping Cart Application
+# 🛒 ShopEase - Premium E-Commerce Platform
 
-> A full-stack e-commerce shopping cart application built with **Go (Gin + GORM)** backend and **React (Vite)** frontend.
+A high-performance, full-stack shopping application featuring a modular Node.js/Go backend and a stunning React frontend. Built with modern UI/UX principles, smooth animations, and a robust design system.
 
-## 📋 Table of Contents
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Screenshots](#screenshots)
-- [Bonus Features](#bonus-features)
+---
+
+## 🌐 Live Demo
+
+**Frontend (Render):** [https://shopease-frontend.onrender.com](https://shopease-frontend.onrender.com)  
+**Backend (Render):** [https://shopease-backend.onrender.com](https://shopease-backend.onrender.com)
+
+> ⚠️ **Note:** The backend on Render may take 30-60 seconds to wake up if it has been idle (free tier).
+
+---
 
 ## ✨ Features
 
-### Core Features
-- ✅ User Registration & Authentication (JWT)
-- ✅ Single-Device Login Enforcement
-- ✅ Item Catalog Management
-- ✅ Shopping Cart Operations
-- ✅ Order Placement & History
-- ✅ Protected Routes with Middleware
+### Core Modules
 
-### Bonus Features
-- 🎁 Password Hashing with bcrypt
-- 🎁 Request Rate Limiting
-- 🎁 Input Validation & Sanitization
-- 🎁 Graceful Error Handling
-- 🎁 API Response Pagination
-- 🎁 Comprehensive Unit Tests with Ginkgo
-- 🎁 Premium UI with Animations
-- 🎁 Responsive Design
-- 🎁 Dark Mode Support
+| Module | Icon | Description |
+| :--- | :---: | :--- |
+| **Authentication** | 🔐 | Secure JWT login with single-device enforcement |
+| **Product Discovery** | 🛍️ | Smart filtering, search, and category exploration |
+| **Shopping Cart** | 🛒 | Real-time cart management with cloud syncing |
+| **Wishlist** | ❤️ | One-tap favorites to track your desired items |
+| **Order History** | 📜 | Detailed logs of your past purchases and status |
+| **Dark Mode** | 🌙 | Premium dark/light mode with system preference |
+
+### Advanced Capabilities
+- 🛡️ **Security**: Password hashing with Bcrypt, Rate limiting, and Security headers.
+- ⚡ **Auto-Seeding**: The Node.js and Go backends automatically populate with 20+ premium products on first run.
+- � **Rich UI**: Built with Lucide-React icons, Framer-motion-like transitions, and a custom CSS design system.
+- 📱 **Mobile First**: Fully responsive layout optimized for all device sizes.
 
 ## 🛠️ Tech Stack
 
@@ -52,70 +57,34 @@
 
 ## 📁 Project Structure
 
+### Frontend (React + Vite)
 ```
-shopease/
-├── backend/
-│   ├── cmd/
-│   │   └── server/
-│   │       └── main.go          # Application entry point
-│   ├── internal/
-│   │   ├── config/
-│   │   │   └── config.go        # Configuration management
-│   │   ├── database/
-│   │   │   └── database.go      # Database connection & migration
-│   │   ├── handlers/
-│   │   │   ├── user.go          # User handlers
-│   │   │   ├── item.go          # Item handlers
-│   │   │   ├── cart.go          # Cart handlers
-│   │   │   └── order.go         # Order handlers
-│   │   ├── middleware/
-│   │   │   ├── auth.go          # JWT authentication middleware
-│   │   │   └── cors.go          # CORS middleware
-│   │   ├── models/
-│   │   │   ├── user.go          # User model
-│   │   │   ├── item.go          # Item model
-│   │   │   ├── cart.go          # Cart model
-│   │   │   └── order.go         # Order model
-│   │   ├── repository/
-│   │   │   ├── user.go          # User repository
-│   │   │   ├── item.go          # Item repository
-│   │   │   ├── cart.go          # Cart repository
-│   │   │   └── order.go         # Order repository
-│   │   ├── routes/
-│   │   │   └── routes.go        # Route definitions
-│   │   └── utils/
-│   │       ├── jwt.go           # JWT utilities
-│   │       └── response.go      # Response helpers
-│   ├── tests/
-│   │   ├── user_test.go
-│   │   ├── cart_test.go
-│   │   └── order_test.go
-│   ├── go.mod
-│   ├── go.sum
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── ItemList.jsx
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── CartModal.jsx
-│   │   │   └── OrderHistory.jsx
-│   │   ├── pages/
-│   │   │   ├── LoginPage.jsx
-│   │   │   └── ShopPage.jsx
-│   │   ├── services/
-│   │   │   └── api.js
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
-└── README.md
+frontend/
+├── src/
+│   ├── components/      # UI Components (Modals, Navbar, etc.)
+│   ├── pages/           # Page-level components (Home, Shop, Cart)
+│   ├── hooks/           # Custom React hooks for business logic
+│   ├── layouts/         # Layout wrappers (MainLayout)
+│   ├── context/         # AuthContext for global state
+│   ├── services/        # API service layers (Axios)
+│   ├── config.js        # Environment & API configuration
+│   ├── App.jsx          # Main Router & Entry Point
+│   └── index.css        # Premium Design System
+```
+
+### Backend (Node.js & Go)
+```
+backend-node/            # Node.js + Express + MongoDB
+├── routes/              # Modular route definitions
+├── utils/              # Seeder & Helper functions
+└── server.js            # Entry point with auto-seeding
+
+backend/                 # Go + Gin + GORM + SQLite
+├── internal/
+│   ├── handlers/        # API request handlers
+│   ├── routes/          # Unified route setup
+│   └── database/        # DB connection & auto-seeding
+└── cmd/server/main.go   # Entry point
 ```
 
 ## 🚀 Getting Started
@@ -133,6 +102,7 @@ npm install
 # Create a .env file with your MONGODB_URL
 npm start
 ```
+*Note: The database will **automatically seed** with initial products if it's empty.*
 
 The server will start at `http://localhost:8080`.
 

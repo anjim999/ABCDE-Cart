@@ -1,254 +1,74 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import ItemList from './components/ItemList';
+
+// Layouts & Components
+import MainLayout from './layouts/MainLayout';
+import Toast from './components/common/Toast';
 import CartModal from './components/CartModal';
 import OrderHistory from './components/OrderHistory';
 import FavoritesModal from './components/FavoritesModal';
 import ProductPreviewModal from './components/ProductPreviewModal';
-import Login from './components/Login';
-import Navbar from './components/Navbar';
-import HomePage from './components/HomePage';
-import CartPage from './components/CartPage';
-import { favoriteApi, cartApi, orderApi } from './services/api';
-import { 
-  CheckCircle,
-  X,
-  Sparkles,
-  Smartphone,
-  Layout,
-  Heart,
-  Package
-} from 'lucide-react';
 
-// Toast Component
-const Toast = ({ message, type, onClose }) => {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 4000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
+// Pages
+import HomePage from './pages/HomePage';
+import Login from './pages/Login';
+import ItemList from './pages/ItemList';
+import CartPage from './pages/CartPage';
 
-  const icons = {
-    success: <CheckCircle className="w-5 h-5 text-emerald-400" />,
-    error: <X className="w-5 h-5 text-red-400" />,
-    info: <Sparkles className="w-5 h-5 text-primary-400" />,
-  };
+// Hooks
+import { useCart } from './hooks/useCart';
+import { useFavorites } from './hooks/useFavorites';
+import { useTheme } from './hooks/useTheme';
 
-  const styles = {
-    success: 'border-emerald-500/50',
-    error: 'border-red-500/50',
-    info: 'border-primary-500/50',
-  };
-
-  return (
-    <div className={`toast ${styles[type]}`}>
-      {icons[type]}
-      <span className="flex-1">{message}</span>
-      <button onClick={onClose} className="text-dark-400 hover:text-white">
-        <X className="w-4 h-4" />
-      </button>
-    </div>
-  );
-};
-
-// Main Layout Wrapper
-const MainLayout = ({ children, cart, setDarkMode, darkMode, cartCount, onCartClick, onOrdersClick, onFavoritesClick, onLogoutToast }) => {
-  const location = useLocation();
-  const hideNavbarPaths = ['/', '/login'];
-  const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
-
-  return (
-    <div className="min-h-screen">
-      {!shouldHideNavbar && (
-        <Navbar 
-          cartCount={cartCount}
-          onCartClick={onCartClick}
-          onOrdersClick={onOrdersClick}
-          onFavoritesClick={onFavoritesClick}
-          onLogoutToast={onLogoutToast}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-        />
-      )}
-      {children}
-    </div>
-  );
-};
-
-// Main App Controller
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
-  const [cart, setCart] = useState(null);
+  
+  // Toast State
+  const [toasts, setToasts] = useState([]);
+  const addToast = (message, type = 'info') => {
+    const id = `${Date.now()}-${Math.random()}`;
+    setToasts(prev => [...prev, { id, message, type }]);
+  };
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  const [darkMode, setDarkMode] = useTheme();
+
+  // Modals State
   const [showCartModal, setShowCartModal] = useState(false);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
-  const [favorites, setFavorites] = useState(new Set());
-  const [fullFavorites, setFullFavorites] = useState([]);
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
   const [previewProduct, setPreviewProduct] = useState(null);
-  const [addingToCartId, setAddingToCartId] = useState(null);
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [toasts, setToasts] = useState([]);
-  const processingFavorites = useRef(new Set());
-  const processingCart = useRef(new Set());
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' || 
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  });
 
-  // Apply theme class to html element
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [darkMode]);
+  // Custom Hooks for Business Logic
+  const { 
+    cart, 
+    setCart,
+    addingToCartId, 
+    checkingOut, 
+    fetchCart, 
+    handleAddToCart, 
+    handleUpdateQuantity, 
+    handleRemoveItem, 
+    handleCheckout 
+  } = useCart(isAuthenticated, addToast);
 
-  // Add toast helper
-  const addToast = useCallback((message, type = 'info') => {
-    const id = `${Date.now()}-${Math.random()}`;
-    setToasts(prev => [...prev, { id, message, type }]);
-  }, []);
-
-  const removeToast = useCallback((id) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  }, []);
-
-  // Fetch cart and favorites
-  const fetchCart = async () => {
-    try {
-      const response = await cartApi.get();
-      if (response.success) {
-        setCart(response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching cart:', error);
-    }
-  };
-
-  const fetchFavorites = async () => {
-    try {
-      setFavoritesLoading(true);
-      const response = await favoriteApi.list();
-      if (response.success) {
-        const uniqueData = [];
-        const seenIds = new Set();
-        (response.data || []).forEach(item => {
-          const id = item._id || item.id;
-          if (id && !seenIds.has(id)) {
-            seenIds.add(id);
-            uniqueData.push(item);
-          }
-        });
-        setFullFavorites(uniqueData);
-        setFavorites(new Set(uniqueData.map(item => item._id || item.id)));
-      }
-    } catch (error) {
-      console.error('Error fetching favorites:', error);
-    } finally {
-      setFavoritesLoading(false);
-    }
-  };
+  const { 
+    favorites, 
+    fullFavorites, 
+    favoritesLoading, 
+    fetchFavorites, 
+    handleToggleFavorite 
+  } = useFavorites(isAuthenticated, addToast);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
       fetchFavorites();
     }
-  }, [isAuthenticated]);
-
-  const handleToggleFavorite = useCallback(async (itemId) => {
-    if (processingFavorites.current.has(itemId)) return;
-    
-    try {
-      processingFavorites.current.add(itemId);
-      const response = await favoriteApi.toggle(itemId);
-      if (response.success) {
-        setFavorites(prev => {
-          const next = new Set(prev);
-          if (response.action === 'added') {
-            next.add(itemId);
-            addToast('Added to favorites', 'success');
-          } else {
-            next.delete(itemId);
-            addToast('Removed from favorites', 'info');
-          }
-          return next;
-        });
-        fetchFavorites();
-      }
-    } catch (error) {
-       addToast('Failed to update favorites', 'error');
-    } finally {
-      processingFavorites.current.delete(itemId);
-    }
-  }, [addToast, fetchFavorites]);
-
-  const handleAddToCart = useCallback(async (itemId) => {
-    if (processingCart.current.has(itemId)) return;
-
-    try {
-      processingCart.current.add(itemId);
-      setAddingToCartId(itemId);
-      const response = await cartApi.add(itemId, 1);
-      if (response.success) {
-        setCart(response.data);
-        addToast('Item added to cart!', 'success');
-      }
-    } catch (error) {
-      addToast('Failed to add item to cart', 'error');
-    } finally {
-      setAddingToCartId(null);
-      processingCart.current.delete(itemId);
-    }
-  }, [addToast]);
-
-  const handleUpdateQuantity = async (cartItemId, quantity) => {
-    try {
-      if (quantity === 0) {
-        await cartApi.removeItem(cartItemId);
-        addToast('Item removed from cart', 'info');
-      } else {
-        await cartApi.updateItem(cartItemId, quantity);
-      }
-      fetchCart();
-    } catch (error) {
-      addToast('Failed to update cart', 'error');
-    }
-  };
-
-  const handleRemoveItem = async (cartItemId) => {
-    try {
-      await cartApi.removeItem(cartItemId);
-      fetchCart();
-      addToast('Item removed from cart', 'info');
-    } catch (error) {
-      addToast('Failed to remove item', 'error');
-    }
-  };
-
-  const handleCheckout = async () => {
-    if (!cart || cart.item_count === 0) {
-      addToast('Your cart is empty!', 'error');
-      return;
-    }
-
-    try {
-      setCheckingOut(true);
-      const response = await orderApi.create(cart.id);
-      if (response.success) {
-        setCart({ ...cart, items: [], item_count: 0, total: 0 });
-        addToast('🎉 Order placed successfully!', 'success');
-      }
-    } catch (error) {
-      addToast('Failed to place order', 'error');
-    } finally {
-      setCheckingOut(false);
-    }
-  };
+  }, [isAuthenticated, fetchCart, fetchFavorites]);
 
   const cartCount = cart?.item_count || 0;
 
@@ -291,12 +111,11 @@ const AppContent = () => {
               />
             ) : <Navigate to="/login" />
           } />
-          {/* Catch all */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </MainLayout>
 
-      {/* Modals & Overlays (Persistent across routes if needed) */}
+      {/* Modals & Overlays */}
       <CartModal
         isOpen={showCartModal}
         onClose={() => setShowCartModal(false)}

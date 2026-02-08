@@ -189,3 +189,68 @@ func (h *UserHandler) GetCurrentUser(c *gin.Context) {
 
 	utils.SuccessResponse(c, http.StatusOK, "User retrieved successfully", user.ToResponse())
 }
+// ToggleFavorite handles POST /users/favorites - Add/Remove from favorites
+func (h *UserHandler) ToggleFavorite(c *gin.Context) {
+	user, exists := middleware.GetUserFromContext(c)
+	if !exists {
+		utils.ErrorResponse(c, http.StatusUnauthorized, "User not found")
+		return
+	}
+
+	var req struct {
+		ItemID uint `json:"itemId" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ValidationErrorResponse(c, "Invalid request body", err.Error())
+		return
+	}
+
+	// Check if item exists
+	var item models.Item
+	if err := database.DB.First(&item, req.ItemID).Error; err != nil {
+		utils.ErrorResponse(c, http.StatusNotFound, "Item not found")
+		return
+	}
+
+	// Check if already in favorites
+	var count int64
+	database.DB.Table("user_favorites").Where("user_id = ? AND item_id = ?", user.ID, req.ItemID).Count(&count)
+
+	action := "added"
+	if count > 0 {
+		// Remove from favorites
+		if err := database.DB.Model(user).Association("Favorites").Delete(&item); err != nil {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to remove from favorites")
+			return
+		}
+		action = "removed"
+	} else {
+		// Add to favorites
+		if err := database.DB.Model(user).Association("Favorites").Append(&item); err != nil {
+			utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to add to favorites")
+			return
+		}
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, "Favorites updated", gin.H{
+		"action": action,
+	})
+}
+
+// GetFavorites handles GET /users/favorites - Get user's favorite items
+func (h *UserHandler) GetFavorites(c *gin.Context) {
+	user, exists := middleware.GetUserFromContext(c)
+	if !exists {
+		utils.ErrorResponse(c, http.StatusUnauthorized, "User not found")
+		return
+	}
+
+	var favorites []models.Item
+	if err := database.DB.Model(user).Association("Favorites").Find(&favorites); err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to fetch favorites")
+		return
+	}
+
+	utils.SuccessResponse(c, http.StatusOK, "Favorites retrieved successfully", favorites)
+}

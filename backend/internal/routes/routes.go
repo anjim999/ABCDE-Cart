@@ -50,6 +50,8 @@ func SetupRouter() *gin.Engine {
 			// Protected routes
 			users.POST("/logout", middleware.AuthMiddleware(), userHandler.Logout)         // POST /users/logout
 			users.GET("/me", middleware.AuthMiddleware(), userHandler.GetCurrentUser)      // GET /users/me
+			users.GET("/favorites", middleware.AuthMiddleware(), userHandler.GetFavorites) // GET /users/favorites
+			users.POST("/favorites", middleware.AuthMiddleware(), userHandler.ToggleFavorite) // POST /users/favorites
 		}
 
 		// ==================
@@ -105,6 +107,8 @@ func SetupRouter() *gin.Engine {
 		legacy.GET("/users", userHandler.ListUsers)
 		legacy.POST("/users/login", userHandler.Login)
 		legacy.POST("/users/logout", middleware.AuthMiddleware(), userHandler.Logout)
+		legacy.GET("/users/favorites", middleware.AuthMiddleware(), userHandler.GetFavorites)
+		legacy.POST("/users/favorites", middleware.AuthMiddleware(), userHandler.ToggleFavorite)
 
 		// Item routes
 		legacy.POST("/items", itemHandler.CreateItem)

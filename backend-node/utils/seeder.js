@@ -1,0 +1,195 @@
+const Item = require('../models/Item');
+
+const items = [
+  {
+    name: "Wireless Bluetooth Headphones",
+    description: "Premium noise-cancelling headphones with 30hr battery life",
+    price: 12499,
+    image_url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "4K Ultra HD Smart TV",
+    description: "55-inch LED TV with built-in streaming apps",
+    price: 45999,
+    image_url: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Gaming Laptop",
+    description: "High-performance laptop with RTX 4060 graphics",
+    price: 114999,
+    image_url: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Smart Watch Series 7",
+    description: "Fitness tracker, GPS, and health monitoring",
+    price: 32999,
+    image_url: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Digital Camera",
+    description: "Mirrorless camera with 24MP sensor",
+    price: 54999,
+    image_url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Portable Power Bank",
+    description: "20000mAh fast charging power bank",
+    price: 2499,
+    image_url: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Bluetooth Speaker",
+    description: "Waterproof portable speaker with deep bass",
+    price: 3999,
+    image_url: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",
+    category: "Electronics",
+    is_active: true
+  },
+  {
+    name: "Premium Denim Jacket",
+    description: "Classic fit denim jacket for all seasons",
+    price: 4999,
+    image_url: "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Running Shoes",
+    description: "Lightweight running shoes with foam cushioning",
+    price: 7999,
+    image_url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Leather Messenger Bag",
+    description: "Genuine leather bag for laptop and documents",
+    price: 9999,
+    image_url: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Aviator Sunglasses",
+    description: "Classic polarized aviator sunglasses",
+    price: 1299,
+    image_url: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Cotton T-Shirt Pack",
+    description: "Pack of 3 premium cotton basic tees",
+    price: 1999,
+    image_url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Classic Wrist Watch",
+    description: "Minimalist analog watch with leather strap",
+    price: 8999,
+    image_url: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Baseball Cap",
+    description: "Adjustable cotton baseball cap",
+    price: 999,
+    image_url: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400",
+    category: "Fashion",
+    is_active: true
+  },
+  {
+    name: "Ceramic Coffee Mug",
+    description: "Handcrafted ceramic mug, dishwasher safe",
+    price: 999,
+    image_url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400",
+    category: "Home",
+    is_active: true
+  },
+  {
+    name: "Scented Candle",
+    description: "Lavender scented soy wax candle",
+    price: 1299,
+    image_url: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400",
+    category: "Home",
+    is_active: true
+  },
+  {
+    name: "Potted Succulent",
+    description: "Artificial succulent plant in white pot",
+    price: 799,
+    image_url: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400",
+    category: "Home",
+    is_active: true
+  },
+  {
+    name: "The Great Gatsby",
+    description: "Classic novel by F. Scott Fitzgerald",
+    price: 799,
+    image_url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400",
+    category: "Books",
+    is_active: true
+  },
+  {
+    name: "Clean Code",
+    description: "A Handbook of Agile Software Craftsmanship",
+    price: 3499,
+    image_url: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400",
+    category: "Books",
+    is_active: true
+  },
+  {
+    name: "Atomic Habits",
+    description: "An Easy & Proven Way to Build Good Habits",
+    price: 1499,
+    image_url: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400",
+    category: "Books",
+    is_active: true
+  },
+  {
+    name: "Yoga Mat",
+    description: "Non-slip eco-friendly yoga mat",
+    price: 1999,
+    image_url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400",
+    category: "Sports",
+    is_active: true
+  },
+  {
+    name: "Dumbbell Set",
+    description: "Pair of 5kg adjustable dumbbells",
+    price: 4999,
+    image_url: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400",
+    category: "Sports",
+    is_active: true
+  }
+];
+
+const seedIfEmpty = async () => {
+  try {
+    const count = await Item.countDocuments();
+    if (count > 0) return;
+
+    console.log('🌱 Seeding initial products...');
+    await Item.insertMany(items);
+    console.log(`✅ Successfully seeded ${items.length} products`);
+  } catch (error) {
+    console.error('❌ Seeding error:', error);
+  }
+};
+
+module.exports = { seedIfEmpty };
