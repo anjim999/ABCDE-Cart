@@ -10,7 +10,7 @@ const items = [
     name: "Wireless Bluetooth Headphones",
     description: "Premium noise-cancelling headphones with 30hr battery life",
     price: 12499,
-    image_url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    image_url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -18,7 +18,7 @@ const items = [
     name: "Smartphone Pro Max",
     description: "Latest generation smartphone with 5G and AI camera",
     price: 89999,
-    image_url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+    image_url: "https://images.unsplash.com/photo-1592899677712-a5a254503484?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -42,7 +42,7 @@ const items = [
     name: "Wireless Earbuds",
     description: "True wireless earbuds with charging case",
     price: 5999,
-    image_url: "https://images.unsplash.com/photo-1572569028738-411a5431b77f?w=400",
+    image_url: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -50,7 +50,7 @@ const items = [
     name: "Smart Watch Series 7",
     description: "Fitness tracker, GPS, and health monitoring",
     price: 32999,
-    image_url: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400",
+    image_url: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -82,7 +82,7 @@ const items = [
     name: "Mechanical Keyboard",
     description: "RGB mechanical keyboard for gaming",
     price: 7499,
-    image_url: "https://images.unsplash.com/photo-1587829741301-dc798b91aafa?w=400",
+    image_url: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -108,7 +108,7 @@ const items = [
     name: "Leather Messenger Bag",
     description: "Genuine leather bag for laptop and documents",
     price: 9999,
-    image_url: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
+    image_url: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400",
     category: "Fashion",
     is_active: true
   },
@@ -132,7 +132,7 @@ const items = [
     name: "Winter Scarf",
     description: "Soft wool blend scarf",
     price: 1499,
-    image_url: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400",
+    image_url: "https://images.unsplash.com/photo-1606836173268-bdba4870f723?w=400",
     category: "Fashion",
     is_active: true
   },
@@ -140,7 +140,7 @@ const items = [
     name: "Classic Wrist Watch",
     description: "Minimalist analog watch with leather strap",
     price: 8999,
-    image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400",
+    image_url: "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400",
     category: "Fashion",
     is_active: true
   },
@@ -156,7 +156,7 @@ const items = [
     name: "Hiking Boots",
     description: "Waterproof hiking boots for outdoor trails",
     price: 11999,
-    image_url: "https://images.unsplash.com/photo-1520256862855-398228c45933?w=400",
+    image_url: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400",
     category: "Fashion",
     is_active: true
   },
@@ -164,7 +164,7 @@ const items = [
     name: "Yoga Leggings",
     description: "High-waist stretchable yoga pants",
     price: 2999,
-    image_url: "https://images.unsplash.com/photo-1506619216599-9d16d0003022?w=400",
+    image_url: "https://images.unsplash.com/photo-1543854589-4246ad79a0b1?w=400",
     category: "Fashion",
     is_active: true
   },
@@ -182,7 +182,7 @@ const items = [
     name: "Modern Table Lamp",
     description: "LED desk lamp with adjustable brightness",
     price: 3499,
-    image_url: "https://images.unsplash.com/photo-1507473888900-52e1ad145986?w=400",
+    image_url: "https://images.unsplash.com/photo-1513506003011-3b03c8b8245b?w=400",
     category: "Home",
     is_active: true
   },
@@ -190,7 +190,7 @@ const items = [
     name: "Non-Stick Frying Pan",
     description: "10-inch non-stick skillet",
     price: 2499,
-    image_url: "https://images.unsplash.com/photo-1584990347449-a0846b13763f?w=400",
+    image_url: "https://images.unsplash.com/photo-1585514631313-7521092659e5?w=400",
     category: "Home",
     is_active: true
   },
@@ -206,7 +206,7 @@ const items = [
     name: "Throw Pillow",
     description: "Decorative velvet throw pillow",
     price: 1499,
-    image_url: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?w=400",
+    image_url: "https://images.unsplash.com/photo-1579656381226-5fc70eb0d1e5?w=400",
     category: "Home",
     is_active: true
   },
@@ -222,7 +222,7 @@ const items = [
     name: "Wall Clock",
     description: "Minimalist modern wall clock",
     price: 1999,
-    image_url: "https://images.unsplash.com/photo-1563861826100-9cb868c625b8?w=400",
+    image_url: "https://images.unsplash.com/photo-1537207606774-7226f8d169ac?w=400",
     category: "Home",
     is_active: true
   },
@@ -230,7 +230,7 @@ const items = [
     name: "Bedsheet Set",
     description: "King size cotton bedsheet with pillow covers",
     price: 3999,
-    image_url: "https://images.unsplash.com/photo-1522771753018-be8071801d8b?w=400",
+    image_url: "https://images.unsplash.com/photo-1629948618343-0d33f97a3091?w=400",
     category: "Home",
     is_active: true
   },
@@ -238,7 +238,7 @@ const items = [
     name: "Vacuum Cleaner",
     description: "Cordless stick vacuum cleaner",
     price: 9999,
-    image_url: "https://images.unsplash.com/photo-1558317374-a3594743e42b?w=400",
+    image_url: "https://images.unsplash.com/photo-1527515668352-8d77a9443592?w=400",
     category: "Home",
     is_active: true
   },
@@ -246,7 +246,7 @@ const items = [
     name: "Blender",
     description: "High-speed smoothie blender",
     price: 2999,
-    image_url: "https://images.unsplash.com/photo-1570222094114-28a9d8894b74?w=400",
+    image_url: "https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=400",
     category: "Home",
     is_active: true
   },
@@ -338,7 +338,7 @@ const items = [
     name: "Yoga Mat",
     description: "Non-slip eco-friendly yoga mat",
     price: 1999,
-    image_url: "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400",
+    image_url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400",
     category: "Sports",
     is_active: true
   },
@@ -346,7 +346,7 @@ const items = [
     name: "Dumbbell Set",
     description: "Pair of 5kg adjustable dumbbells",
     price: 4999,
-    image_url: "https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=400",
+    image_url: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400",
     category: "Sports",
     is_active: true
   },
@@ -354,7 +354,7 @@ const items = [
     name: "Tennis Racket",
     description: "Professional graphite tennis racket",
     price: 10999,
-    image_url: "https://images.unsplash.com/photo-1617083934555-ac7d4fee8909?w=400",
+    image_url: "https://images.unsplash.com/photo-1626224583764-84786c713064?w=400",
     category: "Sports",
     is_active: true
   },
@@ -378,7 +378,7 @@ const items = [
     name: "Cycling Helmet",
     description: "Safety helmet for road cycling",
     price: 3499,
-    image_url: "https://images.unsplash.com/photo-1558507345-0d48f98c4f92?w=400",
+    image_url: "https://images.unsplash.com/photo-1561583278-f74811f01037?w=400",
     category: "Sports",
     is_active: true
   },
@@ -386,7 +386,7 @@ const items = [
     name: "Jump Rope",
     description: "Speed jump rope for cardio",
     price: 799,
-    image_url: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=400",
+    image_url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400",
     category: "Sports",
     is_active: true
   },
@@ -394,7 +394,7 @@ const items = [
     name: "Boxing Gloves",
     description: "Leather boxing gloves 12oz",
     price: 3999,
-    image_url: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=400",
+    image_url: "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=400",
     category: "Sports",
     is_active: true
   },

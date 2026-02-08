@@ -21,7 +21,33 @@ exports.addToCart = async (req, res) => {
     }
 
     await cart.save();
-    res.json({ success: true, message: 'Item added to cart' });
+
+    // Populate and format response to match getMyCart structure
+    await cart.populate('items.item');
+    const cartObj = cart.toObject({ virtuals: true });
+    
+    const items = cartObj.items.map(ci => ({
+      id: ci._id,
+      cart_id: cartObj._id,
+      item_id: ci.item._id || ci.item,
+      quantity: ci.quantity,
+      item: ci.item,
+      subtotal: (ci.item.price || 0) * ci.quantity
+    }));
+
+    const total = items.reduce((sum, i) => sum + i.subtotal, 0);
+    const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+
+    res.json({ 
+      success: true, 
+      message: 'Item added to cart',
+      data: { 
+        id: cart._id, 
+        items, 
+        total, 
+        item_count: itemCount 
+      }
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
