@@ -12,8 +12,8 @@ A high-performance, full-stack shopping application featuring a modular Node.js/
 
 ## 🌐 Live Demo
 
-**Frontend (Render):** [https://shopease-frontend.onrender.com](https://shopease-frontend.onrender.com)  
-**Backend (Render):** [https://shopease-backend.onrender.com](https://shopease-backend.onrender.com)
+**Frontend (Vercel):** [https://abcde-cart.vercel.app/](https://abcde-cart.vercel.app/)  
+**Backend (Render):** [https://abcde-shopping-cart-a09m.onrender.com](https://abcde-shopping-cart-a09m.onrender.com)
 
 > ⚠️ **Note:** The backend on Render may take 30-60 seconds to wake up if it has been idle (free tier).
 
