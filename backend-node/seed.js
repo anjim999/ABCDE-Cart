@@ -39,14 +39,6 @@ const items = [
     is_active: true
   },
   {
-    name: "Wireless Earbuds",
-    description: "True wireless earbuds with charging case",
-    price: 5999,
-    image_url: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400",
-    category: "Electronics",
-    is_active: true
-  },
-  {
     name: "Smart Watch Series 7",
     description: "Fitness tracker, GPS, and health monitoring",
     price: 32999,
@@ -75,14 +67,6 @@ const items = [
     description: "Waterproof portable speaker with deep bass",
     price: 3999,
     image_url: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",
-    category: "Electronics",
-    is_active: true
-  },
-  {
-    name: "Mechanical Keyboard",
-    description: "RGB mechanical keyboard for gaming",
-    price: 7499,
-    image_url: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=400",
     category: "Electronics",
     is_active: true
   },
@@ -152,22 +136,6 @@ const items = [
     category: "Fashion",
     is_active: true
   },
-  {
-    name: "Hiking Boots",
-    description: "Waterproof hiking boots for outdoor trails",
-    price: 11999,
-    image_url: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400",
-    category: "Fashion",
-    is_active: true
-  },
-  {
-    name: "Yoga Leggings",
-    description: "High-waist stretchable yoga pants",
-    price: 2999,
-    image_url: "https://images.unsplash.com/photo-1543854589-4246ad79a0b1?w=400",
-    category: "Fashion",
-    is_active: true
-  },
 
   // --- Home ---
   {
@@ -175,22 +143,6 @@ const items = [
     description: "Handcrafted ceramic mug, dishwasher safe",
     price: 999,
     image_url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Modern Table Lamp",
-    description: "LED desk lamp with adjustable brightness",
-    price: 3499,
-    image_url: "https://images.unsplash.com/photo-1513506003011-3b03c8b8245b?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Non-Stick Frying Pan",
-    description: "10-inch non-stick skillet",
-    price: 2499,
-    image_url: "https://images.unsplash.com/photo-1585514631313-7521092659e5?w=400",
     category: "Home",
     is_active: true
   },
@@ -203,50 +155,10 @@ const items = [
     is_active: true
   },
   {
-    name: "Throw Pillow",
-    description: "Decorative velvet throw pillow",
-    price: 1499,
-    image_url: "https://images.unsplash.com/photo-1579656381226-5fc70eb0d1e5?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
     name: "Potted Succulent",
     description: "Artificial succulent plant in white pot",
     price: 799,
     image_url: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Wall Clock",
-    description: "Minimalist modern wall clock",
-    price: 1999,
-    image_url: "https://images.unsplash.com/photo-1537207606774-7226f8d169ac?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Bedsheet Set",
-    description: "King size cotton bedsheet with pillow covers",
-    price: 3999,
-    image_url: "https://images.unsplash.com/photo-1629948618343-0d33f97a3091?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Vacuum Cleaner",
-    description: "Cordless stick vacuum cleaner",
-    price: 9999,
-    image_url: "https://images.unsplash.com/photo-1527515668352-8d77a9443592?w=400",
-    category: "Home",
-    is_active: true
-  },
-  {
-    name: "Blender",
-    description: "High-speed smoothie blender",
-    price: 2999,
-    image_url: "https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?w=400",
     category: "Home",
     is_active: true
   },
@@ -351,34 +263,10 @@ const items = [
     is_active: true
   },
   {
-    name: "Tennis Racket",
-    description: "Professional graphite tennis racket",
-    price: 10999,
-    image_url: "https://images.unsplash.com/photo-1626224583764-84786c713064?w=400",
-    category: "Sports",
-    is_active: true
-  },
-  {
     name: "Soccer Ball",
     description: "Size 5 official match ball",
     price: 1499,
     image_url: "https://images.unsplash.com/photo-1614632537423-1e6c2e7e0aab?w=400",
-    category: "Sports",
-    is_active: true
-  },
-  {
-    name: "Water Bottle",
-    description: "Insulated stainless steel sports bottle",
-    price: 1299,
-    image_url: "https://images.unsplash.com/photo-1602143407151-0111419500be?w=400",
-    category: "Sports",
-    is_active: true
-  },
-  {
-    name: "Cycling Helmet",
-    description: "Safety helmet for road cycling",
-    price: 3499,
-    image_url: "https://images.unsplash.com/photo-1561583278-f74811f01037?w=400",
     category: "Sports",
     is_active: true
   },
