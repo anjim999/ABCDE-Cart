@@ -11,10 +11,12 @@ import {
   CheckCircle,
   Sparkles,
   Eye,
-  EyeOff
+  EyeOff,
+  Sun,
+  Moon
 } from 'lucide-react';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, darkMode, setDarkMode }) => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -78,6 +80,17 @@ const Login = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Floating Theme Toggle */}
+      <div className="absolute top-6 right-6 z-50">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="btn-icon bg-white/50 dark:bg-dark-800/50 backdrop-blur-md border border-slate-200 dark:border-dark-700 shadow-xl"
+          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {darkMode ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-slate-700" />}
+        </button>
+      </div>
+
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/10 rounded-full blur-3xl animate-pulse" />

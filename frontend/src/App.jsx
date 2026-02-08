@@ -262,8 +262,8 @@ const AppContent = () => {
         onFavoritesClick={() => setShowFavoritesModal(true)}
       >
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={isAuthenticated ? <Navigate to="/shop" /> : <Login onLoginSuccess={fetchCart} />} />
+          <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
+          <Route path="/login" element={isAuthenticated ? <Navigate to="/shop" /> : <Login onLoginSuccess={fetchCart} darkMode={darkMode} setDarkMode={setDarkMode} />} />
           <Route path="/shop" element={
             isAuthenticated ? (
               <main className="pt-24 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
