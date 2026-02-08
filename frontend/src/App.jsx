@@ -52,7 +52,7 @@ const Toast = ({ message, type, onClose }) => {
 };
 
 // Main Layout Wrapper
-const MainLayout = ({ children, cart, setDarkMode, darkMode, cartCount, onCartClick, onOrdersClick, onFavoritesClick }) => {
+const MainLayout = ({ children, cart, setDarkMode, darkMode, cartCount, onCartClick, onOrdersClick, onFavoritesClick, onLogoutToast }) => {
   const location = useLocation();
   const hideNavbarPaths = ['/', '/login'];
   const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
