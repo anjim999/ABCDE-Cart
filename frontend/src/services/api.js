@@ -81,6 +81,17 @@ export const authApi = {
   me: () => instance.get('/v1/users/me'),
 };
 
+export const favoriteApi = {
+  toggle: async (itemId) => {
+    const response = await instance.post('/users/favorites', { itemId });
+    return response.data;
+  },
+  list: async () => {
+    const response = await instance.get('/v1/users/favorites');
+    return response.data;
+  }
+};
+
 export const itemApi = {
   list: async (params) => {
     const response = await instance.get('/items', { params });

@@ -93,3 +93,40 @@ exports.listUsers = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.toggleFavorite = async (req, res) => {
+  try {
+    const { itemId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    const itemStr = itemId.toString();
+    const index = user.favorites.findIndex(id => id.toString() === itemStr);
+    
+    if (index > -1) {
+      user.favorites.splice(index, 1);
+      await user.save();
+      return res.json({ success: true, message: 'Removed from favorites', action: 'removed' });
+    } else {
+      // Use addToSet to be extra safe against duplicates at the DB level
+      user.favorites.addToSet(itemId);
+      await user.save();
+      return res.json({ success: true, message: 'Added to favorites', action: 'added' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.getFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate('favorites');
+    const favoritesWithId = user.favorites.map(item => {
+      const doc = item.toObject();
+      doc.id = doc._id;
+      return doc;
+    });
+    res.json({ success: true, data: favoritesWithId });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};

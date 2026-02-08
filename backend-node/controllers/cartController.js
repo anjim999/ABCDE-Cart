@@ -94,8 +94,6 @@ exports.getMyCart = async (req, res) => {
 
 exports.removeFromCart = async (req, res) => {
   try {
-    // The simplified API sends a cart item ID or index. 
-    // In Mongoose subdocs, we can pull by _id.
     const cartItemId = req.params.id;
     const cart = await Cart.findOne({ user: req.user._id });
 
@@ -105,6 +103,29 @@ exports.removeFromCart = async (req, res) => {
     await cart.save();
 
     res.json({ success: true, message: 'Item removed' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.updateQuantity = async (req, res) => {
+  try {
+    const cartItemId = req.params.id;
+    const { quantity } = req.body;
+    
+    const cart = await Cart.findOne({ user: req.user._id });
+
+    if (!cart) return res.status(404).json({ success: false, error: 'Cart not found' });
+
+    const itemIndex = cart.items.findIndex(p => p._id.toString() === cartItemId);
+
+    if (itemIndex > -1) {
+      cart.items[itemIndex].quantity = quantity;
+      await cart.save();
+      res.json({ success: true, message: 'Quantity updated' });
+    } else {
+      res.status(404).json({ success: false, error: 'Item not found in cart' });
+    }
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

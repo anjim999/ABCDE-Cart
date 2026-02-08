@@ -103,11 +103,11 @@ const OrderHistory = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between p-6 border-b border-dark-700/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-accent-500/20 flex items-center justify-center">
-              <History className="w-5 h-5 text-accent-400" />
+              <History className="w-5 h-5 text-accent-500 dark:text-accent-400" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-bold">Order History</h2>
-              <p className="text-sm text-dark-400">
+              <h2 className="text-xl font-display font-bold text-slate-900 dark:text-white">Order History</h2>
+              <p className="text-sm text-slate-500 dark:text-dark-400">
                 {orders.length} order{orders.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -137,13 +137,13 @@ const OrderHistory = ({ isOpen, onClose }) => {
               {orders.map((order, index) => (
                 <div 
                   key={order.id}
-                  className="p-4 bg-dark-800/50 rounded-xl border border-dark-700/50 hover:border-dark-600/50 transition-colors animate-fade-in"
+                  className="p-4 bg-white dark:bg-dark-800/50 rounded-xl border border-slate-200 dark:border-dark-700/50 hover:border-slate-300 dark:hover:border-dark-600/50 transition-colors animate-fade-in"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       {getStatusIcon(order.status)}
-                      <span className="font-semibold">Order #{order.id}</span>
+                      <span className="font-semibold text-slate-800 dark:text-dark-100">Order #{order.id?.slice(-8)}</span>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusBadge(order.status)}`}>
                       {order.status}
@@ -151,16 +151,16 @@ const OrderHistory = ({ isOpen, onClose }) => {
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-dark-400">
+                    <span className="text-slate-500 dark:text-dark-400">
                       {order.item_count} item{order.item_count !== 1 ? 's' : ''}
                     </span>
-                    <span className="font-semibold text-primary-400">
+                    <span className="font-semibold text-primary-500 dark:text-primary-400">
                       ₹{order.total_amount?.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="mt-2 pt-2 border-t border-dark-700/50">
-                    <span className="text-xs text-dark-500">
+                  <div className="mt-2 pt-2 border-t border-slate-100 dark:border-dark-700/50">
+                    <span className="text-xs text-slate-400 dark:text-dark-500">
                       {formatDate(order.created_at)}
                     </span>
                   </div>

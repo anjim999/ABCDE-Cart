@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { itemApi, cartApi } from '../services/api';
+import { itemApi } from '../services/api';
 import { 
   ShoppingCart, 
   Plus, 
@@ -9,14 +9,20 @@ import {
   Package,
   Check,
   Star,
-  Sparkles
+  Sparkles,
+  Heart
 } from 'lucide-react';
 
-const ItemList = ({ onCartUpdate }) => {
+const ItemList = ({ 
+  onCartUpdate, 
+  favorites, 
+  onToggleFavorite, 
+  onProductClick, 
+  addingToCartId, 
+  onAddToCart 
+}) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [addingToCart, setAddingToCart] = useState(null);
-  const [addedItems, setAddedItems] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
@@ -41,13 +47,9 @@ const ItemList = ({ onCartUpdate }) => {
       
       if (response.success) {
         setItems(response.data || []);
-        // Calculate pages (assuming backend returns total count or meta)
-        // If your backend returns meta, use: setTotalPages(Math.ceil(response.meta.total / itemsPerPage));
-        // For now, if full items returned, just handle normally or assume simplified response
         if (response.meta) {
             setTotalPages(Math.ceil(response.meta.total / itemsPerPage));
         } else {
-             // Fallback if backend doesn't send total count easily yet, let's assume if full page returned, there might be more
              if (response.data.length === itemsPerPage) {
                  setTotalPages(page + 1); 
              }
@@ -71,31 +73,6 @@ const ItemList = ({ onCartUpdate }) => {
     }
   };
 
-  const handleAddToCart = async (itemId) => {
-    try {
-      setAddingToCart(itemId);
-      const response = await cartApi.add(itemId, 1);
-      if (response.success) {
-        setAddedItems(prev => new Set([...prev, itemId]));
-        onCartUpdate(response.data);
-        
-        // Show success feedback
-        setTimeout(() => {
-          setAddedItems(prev => {
-            const next = new Set(prev);
-            next.delete(itemId);
-            return next;
-          });
-        }, 2000);
-      }
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      window.alert('Failed to add item to cart');
-    } finally {
-      setAddingToCart(null);
-    }
-  };
-
   const filteredItems = items.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -106,7 +83,7 @@ const ItemList = ({ onCartUpdate }) => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-primary-500 animate-spin mx-auto mb-4" />
-          <p className="text-dark-400">Loading amazing products...</p>
+          <p className="text-slate-500 dark:text-dark-400 font-medium">Loading amazing products...</p>
         </div>
       </div>
     );
@@ -116,10 +93,10 @@ const ItemList = ({ onCartUpdate }) => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h2 className="text-3xl lg:text-4xl font-display font-bold mb-3">
+        <h2 className="text-3xl lg:text-4xl font-display font-bold mb-3 text-slate-900 dark:text-white">
           Discover Our <span className="gradient-text">Products</span>
         </h2>
-        <p className="text-dark-400 max-w-2xl mx-auto">
+        <p className="text-slate-500 dark:text-dark-400 max-w-2xl mx-auto font-medium">
           Click on any item to add it to your cart. Premium selection of electronics, accessories, and more.
         </p>
       </div>
@@ -157,9 +134,9 @@ const ItemList = ({ onCartUpdate }) => {
       {/* Items Grid */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-16">
-          <Package className="w-16 h-16 text-dark-600 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-dark-300 mb-2">No products found</h3>
-          <p className="text-dark-500">Try adjusting your search or filter criteria</p>
+          <Package className="w-16 h-16 text-slate-300 dark:text-dark-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-slate-700 dark:text-dark-300 mb-2">No products found</h3>
+          <p className="text-slate-500 dark:text-dark-500">Try adjusting your search or filter criteria</p>
         </div>
       ) : (
         <>
@@ -169,7 +146,7 @@ const ItemList = ({ onCartUpdate }) => {
                 key={item.id}
                 className="item-card card-hover group cursor-pointer animate-fade-in"
                 style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => handleAddToCart(item.id)}
+                onClick={() => onProductClick(item)}
               >
                 {/* Image */}
                 <div className="relative aspect-square rounded-xl overflow-hidden mb-4 bg-dark-800">
@@ -178,10 +155,6 @@ const ItemList = ({ onCartUpdate }) => {
                       src={item.image_url}
                       alt={item.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
-                      }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -191,28 +164,43 @@ const ItemList = ({ onCartUpdate }) => {
 
                   {/* Overlay with Add Button */}
                   <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                      addedItems.has(item.id)
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-white text-dark-900'
-                    }`}>
-                      {addingToCart === item.id ? (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddToCart(item.id);
+                      }}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 ${
+                        addingToCartId === item.id
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-white dark:bg-dark-800 text-dark-900 dark:text-white border border-transparent dark:border-dark-700 shadow-xl'
+                      }`}
+                    >
+                      {addingToCartId === item.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : addedItems.has(item.id) ? (
-                        <Check className="w-4 h-4" />
                       ) : (
                         <Plus className="w-4 h-4" />
                       )}
-                      <span className="text-sm font-medium">
-                        {addedItems.has(item.id) ? 'Added!' : 'Add to Cart'}
+                      <span className="text-sm font-bold">
+                        Add to Cart
                       </span>
-                    </div>
+                    </button>
                   </div>
+
+                  {/* Favorite Badge */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite(item.id);
+                    }}
+                    className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-dark-800/80 backdrop-blur-md border border-slate-200/50 dark:border-dark-700/50 text-slate-400 hover:text-red-500 transition-all z-10 group/fav"
+                  >
+                    <Heart className={`w-4 h-4 transition-all ${favorites.has(item.id) ? 'fill-red-500 text-red-500 scale-110' : 'group-hover/fav:scale-110'}`} />
+                  </button>
 
                   {/* Category Badge */}
                   {item.category && (
                     <div className="absolute top-3 left-3">
-                      <span className="badge-primary text-xs">
+                      <span className="badge-primary text-[10px] px-2 py-0.5">
                         {item.category}
                       </span>
                     </div>
@@ -221,42 +209,37 @@ const ItemList = ({ onCartUpdate }) => {
 
                 {/* Content */}
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-dark-100 group-hover:text-primary-400 transition-colors line-clamp-1">
+                  <h3 className="font-semibold text-slate-800 dark:text-dark-100 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors line-clamp-1">
                     {item.name}
                   </h3>
-                  <p className="text-sm text-dark-400 line-clamp-2">
+                  <p className="text-sm text-slate-500 dark:text-dark-400 line-clamp-2">
                     {item.description}
                   </p>
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-lg font-bold text-primary-400">
                       ₹{item.price.toFixed(2)}
                     </span>
-                    <div className="flex items-center gap-1 text-amber-400">
+                    <div className="flex items-center gap-1 text-amber-500">
                       <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm">4.8</span>
+                      <span className="text-sm font-bold">
+                        {(4.0 + (item.id?.charCodeAt(item.id.length - 1) % 10) / 10).toFixed(1)}
+                      </span>
+                      <span className="text-xs text-slate-400 dark:text-dark-400 font-medium">
+                        ({(10 + (item.id?.charCodeAt(item.id.length - 1) * 7 + item.id?.charCodeAt(0)) % 250)})
+                      </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Quick Add Indicator */}
-                {addingToCart === item.id && (
-                  <div className="absolute inset-0 bg-dark-950/50 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                    <div className="flex items-center gap-3 text-white">
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                      <span>Adding...</span>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
 
           {/* Pagination Controls */}
-          <div className="flex flex-col items-center gap-4 mt-8 pt-6 border-t border-dark-700/50">
+          <div className="flex flex-col items-center gap-4 mt-8 pt-6 border-t border-slate-200 dark:border-dark-700/50">
             <div className="flex items-center gap-2 font-display text-sm font-medium">
-              <span className="text-dark-400">Showing</span>
-              <span className="text-primary-400">{filteredItems.length}</span>
-              <span className="text-dark-400">items on page {page}</span>
+              <span className="text-slate-500 dark:text-dark-400">Showing</span>
+              <span className="text-primary-500 dark:text-primary-400">{filteredItems.length}</span>
+              <span className="text-slate-500 dark:text-dark-400">items on page {page}</span>
             </div>
             
             <div className="flex items-center gap-3">

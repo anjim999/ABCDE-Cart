@@ -92,9 +92,9 @@ const Login = ({ onLoginSuccess }) => {
             <ShoppingBag className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-display font-bold mb-2">
-            <span className="gradient-text">ShopEase</span>
+            <span className="gradient-text text-slate-900 dark:text-white">ShopEase</span>
           </h1>
-          <p className="text-dark-400">
+          <p className="text-slate-500 dark:text-dark-400 font-medium">
             {isLogin ? 'Welcome back! Sign in to continue.' : 'Create your account to get started.'}
           </p>
         </div>
@@ -102,13 +102,13 @@ const Login = ({ onLoginSuccess }) => {
         {/* Login/Register Card */}
         <div className="glass rounded-3xl p-8 shadow-2xl animate-slide-up">
           {/* Tab Switcher */}
-          <div className="flex gap-2 p-1 bg-dark-800/50 rounded-xl mb-8">
+          <div className="flex gap-2 p-1 bg-slate-100 dark:bg-dark-800/50 rounded-xl mb-8">
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${
                 isLogin 
-                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg' 
-                  : 'text-dark-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/20' 
+                  : 'text-slate-500 dark:text-dark-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Sign In
@@ -117,8 +117,8 @@ const Login = ({ onLoginSuccess }) => {
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 rounded-lg font-medium transition-all duration-300 ${
                 !isLogin 
-                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg' 
-                  : 'text-dark-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-500/20' 
+                  : 'text-slate-500 dark:text-dark-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Sign Up
@@ -219,8 +219,8 @@ const Login = ({ onLoginSuccess }) => {
 
           {/* Divider */}
           <div className="relative my-8">
-            <div className="divider" />
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-900 px-4 text-dark-500 text-sm">
+            <div className="divider opacity-50 dark:opacity-100" />
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-dark-900 px-4 text-slate-400 dark:text-dark-500 text-sm">
               or continue with
             </span>
           </div>
@@ -258,7 +258,7 @@ const Login = ({ onLoginSuccess }) => {
 
         {/* Footer */}
         <p className="text-center text-dark-500 text-sm mt-6 animate-fade-in animate-delay-300">
-          Built with ❤️ for ABCDE Ventures
+          ABCDE: Accelerating Business with Cutting-edge Digital Excellence
         </p>
       </div>
     </div>

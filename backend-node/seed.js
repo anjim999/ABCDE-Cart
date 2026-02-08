@@ -15,14 +15,6 @@ const items = [
     is_active: true
   },
   {
-    name: "Smartphone Pro Max",
-    description: "Latest generation smartphone with 5G and AI camera",
-    price: 89999,
-    image_url: "https://images.unsplash.com/photo-1592899677712-a5a254503484?w=400",
-    category: "Electronics",
-    is_active: true
-  },
-  {
     name: "4K Ultra HD Smart TV",
     description: "55-inch LED TV with built-in streaming apps",
     price: 45999,
@@ -109,14 +101,6 @@ const items = [
     description: "Pack of 3 premium cotton basic tees",
     price: 1999,
     image_url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400",
-    category: "Fashion",
-    is_active: true
-  },
-  {
-    name: "Winter Scarf",
-    description: "Soft wool blend scarf",
-    price: 1499,
-    image_url: "https://images.unsplash.com/photo-1606836173268-bdba4870f723?w=400",
     category: "Fashion",
     is_active: true
   },

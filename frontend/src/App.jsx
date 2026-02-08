@@ -1,20 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { cartApi, orderApi } from './services/api';
-import Login from './components/Login';
-import Navbar from './components/Navbar';
 import ItemList from './components/ItemList';
 import CartModal from './components/CartModal';
 import OrderHistory from './components/OrderHistory';
+import FavoritesModal from './components/FavoritesModal';
+import ProductPreviewModal from './components/ProductPreviewModal';
+import Login from './components/Login';
+import Navbar from './components/Navbar';
+import HomePage from './components/HomePage';
+import CartPage from './components/CartPage';
+import { favoriteApi, cartApi, orderApi } from './services/api';
 import { 
-  ShoppingBag, 
-  CreditCard, 
-  Loader2,
   CheckCircle,
   X,
   Sparkles,
-  ShoppingCart,
-  History
+  Smartphone,
+  Layout,
+  Heart,
+  Package
 } from 'lucide-react';
 
 // Toast Component
@@ -47,18 +51,64 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
-// Main Shop Page
-const ShopPage = () => {
+// Main Layout Wrapper
+const MainLayout = ({ children, cart, setDarkMode, darkMode, cartCount, onCartClick, onOrdersClick, onFavoritesClick }) => {
+  const location = useLocation();
+  const hideNavbarPaths = ['/', '/login'];
+  const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
+
+  return (
+    <div className="min-h-screen">
+      {!shouldHideNavbar && (
+        <Navbar 
+          cartCount={cartCount}
+          onCartClick={onCartClick}
+          onOrdersClick={onOrdersClick}
+          onFavoritesClick={onFavoritesClick}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
+      )}
+      {children}
+    </div>
+  );
+};
+
+// Main App Controller
+const AppContent = () => {
   const { isAuthenticated } = useAuth();
   const [cart, setCart] = useState(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const [showOrderHistory, setShowOrderHistory] = useState(false);
+  const [showFavoritesModal, setShowFavoritesModal] = useState(false);
+  const [favorites, setFavorites] = useState(new Set());
+  const [fullFavorites, setFullFavorites] = useState([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [previewProduct, setPreviewProduct] = useState(null);
+  const [addingToCartId, setAddingToCartId] = useState(null);
   const [checkingOut, setCheckingOut] = useState(false);
   const [toasts, setToasts] = useState([]);
+  const processingFavorites = useRef(new Set());
+  const processingCart = useRef(new Set());
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || 
+      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  // Apply theme class to html element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   // Add toast helper
   const addToast = useCallback((message, type = 'info') => {
-    const id = Date.now();
+    const id = `${Date.now()}-${Math.random()}`;
     setToasts(prev => [...prev, { id, message, type }]);
   }, []);
 
@@ -66,13 +116,7 @@ const ShopPage = () => {
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
-  // Fetch cart on mount
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchCart();
-    }
-  }, [isAuthenticated]);
-
+  // Fetch cart and favorites
   const fetchCart = async () => {
     try {
       const response = await cartApi.get();
@@ -84,10 +128,82 @@ const ShopPage = () => {
     }
   };
 
-  const handleCartUpdate = (newCart) => {
-    setCart(newCart);
-    addToast('Item added to cart!', 'success');
+  const fetchFavorites = async () => {
+    try {
+      setFavoritesLoading(true);
+      const response = await favoriteApi.list();
+      if (response.success) {
+        const uniqueData = [];
+        const seenIds = new Set();
+        (response.data || []).forEach(item => {
+          const id = item._id || item.id;
+          if (id && !seenIds.has(id)) {
+            seenIds.add(id);
+            uniqueData.push(item);
+          }
+        });
+        setFullFavorites(uniqueData);
+        setFavorites(new Set(uniqueData.map(item => item._id || item.id)));
+      }
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    } finally {
+      setFavoritesLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCart();
+      fetchFavorites();
+    }
+  }, [isAuthenticated]);
+
+  const handleToggleFavorite = useCallback(async (itemId) => {
+    if (processingFavorites.current.has(itemId)) return;
+    
+    try {
+      processingFavorites.current.add(itemId);
+      const response = await favoriteApi.toggle(itemId);
+      if (response.success) {
+        setFavorites(prev => {
+          const next = new Set(prev);
+          if (response.action === 'added') {
+            next.add(itemId);
+            addToast('Added to favorites', 'success');
+          } else {
+            next.delete(itemId);
+            addToast('Removed from favorites', 'info');
+          }
+          return next;
+        });
+        fetchFavorites();
+      }
+    } catch (error) {
+       addToast('Failed to update favorites', 'error');
+    } finally {
+      processingFavorites.current.delete(itemId);
+    }
+  }, [addToast, fetchFavorites]);
+
+  const handleAddToCart = useCallback(async (itemId) => {
+    if (processingCart.current.has(itemId)) return;
+
+    try {
+      processingCart.current.add(itemId);
+      setAddingToCartId(itemId);
+      const response = await cartApi.add(itemId, 1);
+      if (response.success) {
+        setCart(response.data);
+        addToast('Item added to cart!', 'success');
+      }
+    } catch (error) {
+      addToast('Failed to add item to cart', 'error');
+    } finally {
+      setAddingToCartId(null);
+      processingCart.current.delete(itemId);
+    }
+  }, [addToast]);
 
   const handleUpdateQuantity = async (cartItemId, quantity) => {
     try {
@@ -99,7 +215,6 @@ const ShopPage = () => {
       }
       fetchCart();
     } catch (error) {
-      console.error('Error updating cart:', error);
       addToast('Failed to update cart', 'error');
     }
   };
@@ -110,13 +225,12 @@ const ShopPage = () => {
       fetchCart();
       addToast('Item removed from cart', 'info');
     } catch (error) {
-      console.error('Error removing item:', error);
       addToast('Failed to remove item', 'error');
     }
   };
 
   const handleCheckout = async () => {
-    if (!cart || !cart.id || cart.item_count === 0) {
+    if (!cart || cart.item_count === 0) {
       addToast('Your cart is empty!', 'error');
       return;
     }
@@ -127,10 +241,8 @@ const ShopPage = () => {
       if (response.success) {
         setCart({ ...cart, items: [], item_count: 0, total: 0 });
         addToast('🎉 Order placed successfully!', 'success');
-        setShowCartModal(false);
       }
     } catch (error) {
-      console.error('Error creating order:', error);
       addToast('Failed to place order', 'error');
     } finally {
       setCheckingOut(false);
@@ -140,88 +252,49 @@ const ShopPage = () => {
   const cartCount = cart?.item_count || 0;
 
   return (
-    <div className="min-h-screen">
-      {/* Navbar */}
-      <Navbar 
+    <BrowserRouter>
+      <MainLayout 
+        darkMode={darkMode} 
+        setDarkMode={setDarkMode} 
         cartCount={cartCount}
         onCartClick={() => setShowCartModal(true)}
         onOrdersClick={() => setShowOrderHistory(true)}
-      />
+        onFavoritesClick={() => setShowFavoritesModal(true)}
+      >
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={isAuthenticated ? <Navigate to="/shop" /> : <Login onLoginSuccess={fetchCart} />} />
+          <Route path="/shop" element={
+            isAuthenticated ? (
+              <main className="pt-24 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <ItemList 
+                  onCartUpdate={(c) => setCart(c)} 
+                  favorites={favorites}
+                  onToggleFavorite={handleToggleFavorite}
+                  onProductClick={(p) => setPreviewProduct(p)}
+                  addingToCartId={addingToCartId}
+                  onAddToCart={handleAddToCart}
+                />
+              </main>
+            ) : <Navigate to="/login" />
+          } />
+          <Route path="/cart" element={
+            isAuthenticated ? (
+              <CartPage 
+                cart={cart} 
+                onUpdateQuantity={handleUpdateQuantity} 
+                onRemoveItem={handleRemoveItem}
+                onCheckout={handleCheckout}
+                checkingOut={checkingOut}
+              />
+            ) : <Navigate to="/login" />
+          } />
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </MainLayout>
 
-      {/* Main Content */}
-      <main className="pt-24 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        {/* Assignment Specific Toolbar */}
-        <div className="glass rounded-2xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4 animate-fade-in shadow-glow-lg border-primary-500/30">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="w-6 h-6 text-primary-400" />
-            <span className="font-display font-bold text-xl">Shopping Portal</span>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Cart Button (Modal version) */}
-            <button
-              onClick={() => setShowCartModal(true)}
-              className="btn-secondary flex items-center gap-2 py-2 px-4 text-sm"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              <span>Cart Details</span>
-            </button>
-
-            {/* Order History Button (Modal version) */}
-            <button
-              onClick={() => setShowOrderHistory(true)}
-              className="btn-secondary flex items-center gap-2 py-2 px-4 text-sm"
-            >
-              <History className="w-4 h-4" />
-              <span>Order History</span>
-            </button>
-
-            {/* Checkout Button */}
-            <button
-              onClick={handleCheckout}
-              disabled={checkingOut || cartCount === 0}
-              className="btn-primary flex items-center gap-2 py-2 px-6 shadow-glow"
-            >
-              {checkingOut ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CreditCard className="w-4 h-4" />
-              )}
-              <span>Checkout</span>
-            </button>
-          </div>
-        </div>
-
-        <ItemList onCartUpdate={handleCartUpdate} />
-      </main>
-
-      {/* Floating Checkout Button */}
-      {cartCount > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up">
-          <button
-            onClick={handleCheckout}
-            disabled={checkingOut}
-            className="btn-accent flex items-center gap-3 px-8 py-4 rounded-full shadow-2xl shadow-accent-500/30"
-          >
-            {checkingOut ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <CreditCard className="w-5 h-5" />
-                <span>Checkout</span>
-                <span className="px-2 py-0.5 bg-white/20 rounded-full text-sm">
-                  ${cart?.total?.toFixed(2) || '0.00'}
-                </span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* Cart Modal */}
+      {/* Modals & Overlays (Persistent across routes if needed) */}
       <CartModal
         isOpen={showCartModal}
         onClose={() => setShowCartModal(false)}
@@ -229,11 +302,30 @@ const ShopPage = () => {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
       />
-
-      {/* Order History Modal */}
       <OrderHistory
         isOpen={showOrderHistory}
         onClose={() => setShowOrderHistory(false)}
+      />
+      <FavoritesModal
+        isOpen={showFavoritesModal}
+        onClose={() => setShowFavoritesModal(false)}
+        favorites={fullFavorites}
+        loading={favoritesLoading}
+        onAddToCart={handleAddToCart}
+        onToggleFavorite={handleToggleFavorite}
+        onProductClick={(p) => setPreviewProduct(p)}
+        addingToCart={addingToCartId}
+        addedItems={new Set()}
+      />
+      <ProductPreviewModal 
+        isOpen={!!previewProduct}
+        onClose={() => setPreviewProduct(null)}
+        product={previewProduct}
+        onAddToCart={handleAddToCart}
+        addingToCart={addingToCartId}
+        isAdded={previewProduct && cart?.items?.some(i => i.item_id === (previewProduct.id || previewProduct._id))}
+        isFavorite={previewProduct && favorites.has(previewProduct?._id || previewProduct?.id)}
+        onToggleFavorite={handleToggleFavorite}
       />
 
       {/* Toast Container */}
@@ -247,24 +339,8 @@ const ShopPage = () => {
           />
         ))}
       </div>
-    </div>
+    </BrowserRouter>
   );
-};
-
-// App Component
-const AppContent = () => {
-  const { isAuthenticated } = useAuth();
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    setLoggedIn(isAuthenticated);
-  }, [isAuthenticated]);
-
-  if (!loggedIn) {
-    return <Login onLoginSuccess={() => setLoggedIn(true)} />;
-  }
-
-  return <ShopPage />;
 };
 
 function App() {

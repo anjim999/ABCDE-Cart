@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   ShoppingBag, 
@@ -8,11 +9,15 @@ import {
   User,
   Menu,
   X,
-  Package
+  Package,
+  Sun,
+  Moon,
+  Heart
 } from 'lucide-react';
 
-const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
-  const { user, logout } = useAuth();
+const Navbar = ({ cartCount, onCartClick, onOrdersClick, onFavoritesClick, darkMode, setDarkMode }) => {
+  const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -36,26 +41,38 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <Link 
+            to={isAuthenticated ? "/shop" : "/"} 
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-display font-bold gradient-text hidden sm:block">
               ShopEase
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
             {/* User Info */}
-            <div className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 rounded-xl border border-dark-700/50">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-dark-800/50 rounded-xl border border-slate-200 dark:border-dark-700/50">
               <User className="w-4 h-4 text-primary-400" />
-              <span className="text-sm text-dark-200">{user?.username}</span>
+              <span className="text-sm text-slate-700 dark:text-dark-200 font-medium">{user?.username}</span>
             </div>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="btn-icon"
+              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
 
             {/* Cart Button */}
             <button
-              onClick={onCartClick}
+              onClick={() => navigate('/cart')}
               className="btn-icon relative"
               title="View Cart"
             >
@@ -63,6 +80,15 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
               {cartCount > 0 && (
                 <span className="cart-badge">{cartCount}</span>
               )}
+            </button>
+
+            {/* Favorites Button */}
+            <button
+              onClick={onFavoritesClick}
+              className="btn-icon"
+              title="Your Favorites"
+            >
+              <Heart className="w-5 h-5 text-red-500" />
             </button>
 
             {/* Order History Button */}
@@ -84,17 +110,24 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-3">
             {/* Cart (Mobile) */}
             <button
-              onClick={onCartClick}
+              onClick={() => navigate('/cart')}
               className="btn-icon relative"
             >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="cart-badge">{cartCount}</span>
               )}
+            </button>
+
+            {/* Theme Toggle (Mobile) */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="btn-icon"
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
             {/* Menu Toggle */}
@@ -111,9 +144,9 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
         {mobileMenuOpen && (
           <div className="md:hidden glass rounded-2xl p-4 mb-4 animate-slide-up">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 p-3 bg-dark-800/50 rounded-xl">
+              <div className="flex items-center gap-3 p-3 bg-white dark:bg-dark-800/50 rounded-xl border border-slate-200 dark:border-dark-700/50">
                 <User className="w-5 h-5 text-primary-400" />
-                <span className="text-dark-200">{user?.username}</span>
+                <span className="text-slate-700 dark:text-dark-200 font-medium">{user?.username}</span>
               </div>
               
               <button
@@ -125,6 +158,17 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick }) => {
               >
                 <History className="w-5 h-5 text-dark-400" />
                 <span>Order History</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  onFavoritesClick();
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-3 p-3 hover:bg-dark-800/50 rounded-xl transition-colors"
+              >
+                <Heart className="w-5 h-5 text-red-500" />
+                <span>Favorites</span>
               </button>
 
               <button
