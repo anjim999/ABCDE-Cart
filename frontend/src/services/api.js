@@ -2,6 +2,8 @@ import axios from 'axios';
 import config from '../config';
 
 // Create API instance with base URL
+// On Vercel, apiBaseUrl will be something like https://your-api.vercel.app/api
+// Locally, it will be /api (which Vite proxies to http://localhost:8080/api)
 const instance = axios.create({
   baseURL: config.apiBaseUrl,
   headers: {
@@ -56,7 +58,7 @@ export const addAuthInterceptor = () => {
 // Apply interceptors immediately
 addAuthInterceptor();
 
-// API endpoints
+// API endpoints - All relative to baseURL (e.g., /api)
 export const authApi = {
   login: async (username, password) => {
     const response = await instance.post('/users/login', { username, password });
@@ -78,7 +80,7 @@ export const authApi = {
       localStorage.removeItem('user');
     }
   },
-  me: () => instance.get('/v1/users/me'),
+  me: () => instance.get('/users/me'),
 };
 
 export const favoriteApi = {
@@ -87,7 +89,7 @@ export const favoriteApi = {
     return response.data;
   },
   list: async () => {
-    const response = await instance.get('/v1/users/favorites');
+    const response = await instance.get('/users/favorites');
     return response.data;
   }
 };
@@ -98,10 +100,10 @@ export const itemApi = {
     return response.data; 
   },
   getCategories: async () => {
-    const response = await instance.get('/v1/items/categories');
+    const response = await instance.get('/items/categories');
     return response.data;
   },
-  get: (id) => instance.get(`/v1/items/${id}`),
+  get: (id) => instance.get(`/items/${id}`),
 };
 
 export const cartApi = {
@@ -110,19 +112,19 @@ export const cartApi = {
     return response.data;
   },
   get: async () => {
-    const response = await instance.get('/v1/carts/my');
+    const response = await instance.get('/carts/my');
     return response.data;
   },
   updateItem: async (itemId, quantity) => {
-    const response = await instance.put(`/v1/carts/items/${itemId}`, { quantity });
+    const response = await instance.put(`/carts/items/${itemId}`, { quantity });
     return response.data;
   },
   removeItem: async (itemId) => {
-    const response = await instance.delete(`/v1/carts/items/${itemId}`);
+    const response = await instance.delete(`/carts/items/${itemId}`);
     return response.data;
   },
   clear: async () => {
-    const response = await instance.delete('/v1/carts/my');
+    const response = await instance.delete('/carts/my');
     return response.data;
   },
 };
@@ -133,11 +135,11 @@ export const orderApi = {
     return response.data;
   },
   myOrders: async () => {
-    const response = await instance.get('/v1/orders/my');
+    const response = await instance.get('/orders/my');
     return response.data;
   },
-  get: (id) => instance.get(`/v1/orders/${id}`),
-  cancel: (id) => instance.post(`/v1/orders/${id}/cancel`),
+  get: (id) => instance.get(`/orders/${id}`),
+  cancel: (id) => instance.post(`/orders/${id}/cancel`),
 };
 
 // Aliases for compatibility

@@ -15,7 +15,7 @@ import {
   Heart
 } from 'lucide-react';
 
-const Navbar = ({ cartCount, onCartClick, onOrdersClick, onFavoritesClick, darkMode, setDarkMode }) => {
+const Navbar = ({ cartCount, onCartClick, onOrdersClick, onFavoritesClick, darkMode, setDarkMode, onLogoutToast }) => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const [scrolled, setScrolled] = useState(false);
@@ -30,6 +30,7 @@ const Navbar = ({ cartCount, onCartClick, onOrdersClick, onFavoritesClick, darkM
   }, []);
 
   const handleLogout = async () => {
+    if (onLogoutToast) onLogoutToast('Logged out successfully', 'success');
     await logout();
     window.location.reload();
   };

@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 // Main Routes
-app.use('/', routes);
+app.use('/api', routes);
 
 // Health Check
 app.get('/health', (req, res) => res.json({ status: 'healthy', message: 'ShopEase Node.js API is running' }));

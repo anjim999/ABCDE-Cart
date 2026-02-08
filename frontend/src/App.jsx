@@ -65,6 +65,7 @@ const MainLayout = ({ children, cart, setDarkMode, darkMode, cartCount, onCartCl
           onCartClick={onCartClick}
           onOrdersClick={onOrdersClick}
           onFavoritesClick={onFavoritesClick}
+          onLogoutToast={onLogoutToast}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
@@ -260,6 +261,7 @@ const AppContent = () => {
         onCartClick={() => setShowCartModal(true)}
         onOrdersClick={() => setShowOrderHistory(true)}
         onFavoritesClick={() => setShowFavoritesModal(true)}
+        onLogoutToast={addToast}
       >
         <Routes>
           <Route path="/" element={<HomePage darkMode={darkMode} setDarkMode={setDarkMode} />} />
