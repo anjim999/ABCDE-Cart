@@ -229,7 +229,7 @@ const ItemList = ({ onCartUpdate }) => {
                   </p>
                   <div className="flex items-center justify-between pt-2">
                     <span className="text-lg font-bold text-primary-400">
-                      ${item.price.toFixed(2)}
+                      ₹{item.price.toFixed(2)}
                     </span>
                     <div className="flex items-center gap-1 text-amber-400">
                       <Star className="w-4 h-4 fill-current" />

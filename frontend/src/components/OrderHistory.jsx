@@ -155,7 +155,7 @@ const OrderHistory = ({ isOpen, onClose }) => {
                       {order.item_count} item{order.item_count !== 1 ? 's' : ''}
                     </span>
                     <span className="font-semibold text-primary-400">
-                      ${order.total_amount?.toFixed(2)}
+                      ₹{order.total_amount?.toFixed(2)}
                     </span>
                   </div>
 

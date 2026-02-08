@@ -122,7 +122,7 @@ const CartModal = ({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem }) =>
                   {/* Subtotal */}
                   <div className="text-right">
                     <p className="font-semibold text-primary-400">
-                      ${item.subtotal?.toFixed(2) || '0.00'}
+                      ₹{item.subtotal?.toFixed(2) || '0.00'}
                     </p>
                   </div>
 
@@ -145,7 +145,7 @@ const CartModal = ({ isOpen, onClose, cart, onUpdateQuantity, onRemoveItem }) =>
             <div className="flex items-center justify-between">
               <span className="text-dark-300">Total</span>
               <span className="text-2xl font-bold text-primary-400">
-                ${cart.total?.toFixed(2) || '0.00'}
+                ₹{cart.total?.toFixed(2) || '0.00'}
               </span>
             </div>
           </div>

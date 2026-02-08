@@ -6,11 +6,22 @@ exports.listItems = async (req, res) => {
     const pageSize = parseInt(req.query.page_size) || 100;
     const skip = (page - 1) * pageSize;
 
-    const items = await Item.find({ is_active: true })
+    // Build filter object
+    const filter = { is_active: true };
+    
+    if (req.query.category && req.query.category !== 'All') {
+      filter.category = req.query.category;
+    }
+
+    if (req.query.search) {
+      filter.name = { $regex: req.query.search, $options: 'i' };
+    }
+
+    const items = await Item.find(filter)
       .skip(skip)
       .limit(pageSize);
 
-    const totalCount = await Item.countDocuments({ is_active: true });
+    const totalCount = await Item.countDocuments(filter);
 
     const itemsWithId = items.map(item => {
       const doc = item.toObject();
